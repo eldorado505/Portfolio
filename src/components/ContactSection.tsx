@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { SendIcon } from 'lucide-react';
+import { SendIcon, Loader2 } from 'lucide-react';
+import { sendEmail } from '@/lib/emailjs';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,7 +18,9 @@ export function ContactSection() {
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string>('');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -58,21 +61,26 @@ export function ContactSection() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError('');
 
     if (validateForm()) {
-      const mailtoLink = `mailto:rajdeeptanwar5@gmail.com?subject=Contact from ${encodeURIComponent(formData.name)}&body=${encodeURIComponent(
-        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-      )}`;
+      setIsLoading(true);
       
-      window.location.href = mailtoLink;
-      
-      setIsSubmitted(true);
-      setTimeout(() => {
-        setIsSubmitted(false);
+      try {
+        await sendEmail(formData);
+        setIsSubmitted(true);
         setFormData({ name: '', email: '', message: '' });
-      }, 3000);
+        
+        setTimeout(() => {
+          setIsSubmitted(false);
+        }, 5000);
+      } catch (error) {
+        setSubmitError(error instanceof Error ? error.message : 'Failed to send message. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -165,11 +173,27 @@ export function ContactSection() {
 
               <Button
                 type="submit"
-                className="w-full bg-primary text-primary-foreground hover:bg-secondary text-base py-6"
+                disabled={isLoading}
+                className="w-full bg-primary text-primary-foreground hover:bg-secondary text-base py-6 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <SendIcon className="mr-2 w-5 h-5" strokeWidth={1.5} />
-                Send Message
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 w-5 h-5 animate-spin" strokeWidth={1.5} />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <SendIcon className="mr-2 w-5 h-5" strokeWidth={1.5} />
+                    Send Message
+                  </>
+                )}
               </Button>
+              
+              {submitError && (
+                <div className="bg-destructive/10 border border-destructive rounded-lg p-4">
+                  <p className="text-destructive text-sm">{submitError}</p>
+                </div>
+              )}
             </form>
           )}
         </div>
