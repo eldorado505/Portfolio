@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-background: 0 0% 10%;
+    --color-foreground: 0 0% 98%;
+    --color-primary: 270 85% 60%;
+    --color-primary-foreground: 0 0% 100%;
+    --color-secondary: 270 65% 50%;
+    --color-secondary-foreground: 0 0% 100%;
+    --color-tertiary: 0 0% 10%;
+    --color-tertiary-foreground: 0 0% 98%;
+    --color-neutral: 0 0% 98%;
+    --color-neutral-foreground: 0 0% 10%;
+    --color-success: 160 65% 45%;
+    --color-success-foreground: 0 0% 100%;
+    --color-warning: 35 90% 55%;
+    --color-warning-foreground: 0 0% 10%;
+    --color-muted: 0 0% 20%;
+    --color-muted-foreground: 0 0% 75%;
+    --color-accent: 270 85% 60%;
+    --color-accent-foreground: 0 0% 100%;
+    --color-card: 0 0% 15%;
+    --color-card-foreground: 0 0% 98%;
+    --color-border: 0 0% 85%;
+    --color-input: 0 0% 85%;
+    --color-ring: 270 85% 60%;
+    --font-sans: "Inter", sans-serif;
+    --font-display: "Space Grotesk", sans-serif;
+    --radius: 8px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply bg-background text-foreground font-sans;
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
